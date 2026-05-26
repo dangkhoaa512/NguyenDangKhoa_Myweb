@@ -7,6 +7,14 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    public function test1()
+    {
+        return redirect()->route('admin.home');
+    }
+    public function test2()
+    {
+        return redirect('/admin/dashboard');
+    }
     public function index()
     {
         return "Danh sách Product";

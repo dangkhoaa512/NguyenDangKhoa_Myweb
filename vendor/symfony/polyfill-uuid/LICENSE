@@ -1,0 +1,23 @@
+oad4(0, src + src_index + 3 * (src_step / 4));
+#elif defined BORDER_REFLECT_101
+line[0] = (y == 0) ? line[2] : vload4(0, src + src_index);
+line[3] = (y == (rows - 2)) ? line[1] : vload4(0, src + src_index + 3 * (src_step / 4));
+#elif defined (BORDER_REPLICATE) || defined(BORDER_REFLECT)
+line[0] = (y == 0) ? line[1] : vload4(0, src + src_index);
+line[3] = (y == (rows - 2)) ? line[2] : vload4(0, src + src_index + 3 * (src_step / 4));
+#endif
+__global uchar *src_p = (__global uchar *)src;
+src_index = block_x * 16 * ssx + (y - 1) * src_step;
+bool line_end = ((block_x + 1) * 16 == cols);
+b = as_uchar16(line[0]);
+e = as_uchar16(line[1]);
+h = as_uchar16(line[2]);
+k = as_uchar16(line[3]);
+#ifdef BORDER_CONSTANT
+a = (block_x == 0 || y == 0) ? 0 : src_p[src_index - 1];
+c = (line_end || y == 0) ? 0 : src_p[src_index + 16];
+d = (block_x == 0) ? 0 : src_p[src_index + src_step - 1];
+f = line_end ? 0 : src_p[src_index + src_step + 16];
+g = (block_x == 0) ? 0 : src_p[src_index + 2 * src_step - 1];
+i = line_end ? 0 : src_p[src_index + 2 * src_step + 16];
+j = (block_x ==

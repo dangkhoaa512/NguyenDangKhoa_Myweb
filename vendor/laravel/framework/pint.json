@@ -1,0 +1,118 @@
+hannels = (_channelConfig || [])[0] || [];
+                // Add any channels provided in the extensions and sort them
+                _channels = sortPlugins(arrAppend(_channels, theExtensions[STR_CHANNELS /* @min:%2echannels */]));
+                // Create an array of all extensions, including the _channels
+                var allExtensions = arrAppend(sortPlugins(theExtensions[STR_CORE /* @min:%2ecore */]), _channels);
+                // Required to allow plugins to call core.getPlugin() during their own initialization
+                _extensions = objFreeze(allExtensions);
+                // This has a side effect of adding the extensions passed during initialization
+                // into the config.extensions, so you can see all of the extensions loaded.
+                // This will also get updated by the addPlugin() and remove plugin code.
+                var cfgExtensions = _self.config[STR_EXTENSIONS /* @min:%2eextensions */] || [];
+                cfgExtensions.splice(0, cfgExtensions[_DYN_LENGTH /* @min:%2elength */]);
+                arrAppend(cfgExtensions, _extensions);
+                var rootCtx = _createTelCtx();
+                // Initializing the channels first
+                if (_channels && _channels[_DYN_LENGTH /* @min:%2elength */] > 0) {
+                    initializePlugins(rootCtx[_DYN_CREATE_NEW /* @min:%2ecreateNew */](_channels), allExtensions);
+                }
+                // Now initialize the normal extensions (explicitly not including the _channels as this can cause duplicate initialization)
+                initializePlugins(rootCtx, allExtensions);
+                if (updateState) {
+                    _doUpdate(updateState);
+                }
+            }
+            function _getPlugin(pluginIdentifier) {
+                var theExt = null;
+                var thePlugin = null;
+                var channelHosts = [];
+                arrForEach(_extensions, function (ext) {
+                    if (ext[_DYN_IDENTIFIER /* @min:%2eidentifier */] === pluginIdentifier && ext !== _telemetryInitializerPlugin) {
+                        thePlugin = ext;
+                        return -1;
+                    }
+                    if (ext.getChannel) {
+                        channelHosts[_DYN_PUSH /* @min:%2epush */](ext);
+                    }
+                });
+                if (!thePlugin && channelHosts[_DYN_LENGTH /* @min:%2elength */] > 0) {
+                    arrForEach(channelHosts, function (host) {
+                        thePlugin = host.getChannel(pluginIdentifier);
+                        if (!thePlugin) {
+                            return -1;
+                        }
+                    });
+                }
+                if (thePlugin) {
+                    theExt = {
+                        plugin: thePlugin,
+                        setEnabled: function (enabled) {
+                            _getPluginState(thePlugin)[STR_DISABLED] = !enabled;
+                        },
+                        isEnabled: function () {
+                            var pluginState = _getPluginState(thePlugin);
+                            return !pluginState[_DYN_TEARDOWN /* @min:%2eteardown */] && !pluginState[STR_DISABLED];
+                        },
+                        remove: function (isAsync, removeCb) {
+                            var _a;
+                            if (isAsync === void 0) { isAsync = true; }
+                            var pluginsToRemove = [thePlugin];
+                            var unloadState = (_a = {
+                                    reason: 1 /* TelemetryUnloadReason.PluginUnload */
+                                },
+                                _a[_DYN_IS_ASYNC /* @min:isAsync */] = isAsync,
+                                _a);
+                            _removePlugins(pluginsToRemove, unloadState, function (removed) {
+                                if (removed) {
+                                    // Re-Initialize the plugin chain
+                                    _initPluginChain({
+                                        reason: 32 /* TelemetryUpdateReason.PluginRemoved */,
+                                        removed: pluginsToRemove
+                                    });
+                                }
+                                removeCb && removeCb(removed);
+                            });
+                        }
+                    };
+                }
+                return theExt;
+            }
+            function _getPluginChain() {
+                if (!_pluginChain) {
+                    // copy the collection of extensions
+                    var extensions = (_extensions || []).slice();
+                    // During add / remove this may get called again, so don't read if already present
+                    if (arrIndexOf(extensions, _telemetryInitializerPlugin) === -1) {
+                        extensions[_DYN_PUSH /* @min:%2epush */](_telemetryInitializerPlugin);
+                    }
+                    _pluginChain = createTelemetryProxyChain(sortPlugins(extensions), _configHandler.cfg, _self);
+                }
+                return _pluginChain;
+            }
+            function _removePlugins(thePlugins, unloadState, removeComplete) {
+                if (thePlugins && thePlugins[_DYN_LENGTH /* @min:%2elength */] > 0) {
+                    var unloadChain = createTelemetryProxyChain(thePlugins, _configHandler.cfg, _self);
+                    var unloadCtx = createProcessTelemetryUnloadContext(unloadChain, _self);
+                    unloadCtx[_DYN_ON_COMPLETE /* @min:%2eonComplete */](function () {
+                        var removed = false;
+                        // Remove the listed config extensions
+                        var newConfigExtensions = [];
+                        arrForEach(_configExtensions, function (plugin, idx) {
+                            if (!_isPluginPresent(plugin, thePlugins)) {
+                                newConfigExtensions[_DYN_PUSH /* @min:%2epush */](plugin);
+                            }
+                            else {
+                                removed = true;
+                            }
+                        });
+                        _configExtensions = newConfigExtensions;
+                        _pluginVersionString = null;
+                        _pluginVersionStringArr = null;
+                        // Re-Create the channel config
+                        var newChannelConfig = [];
+                        if (_channelConfig) {
+                            arrForEach(_channelConfig, function (queue, idx) {
+                                var newQueue = [];
+                                arrForEach(queue, function (channel) {
+                                    if (!_isPluginPresent(channel, thePlugins)) {
+              

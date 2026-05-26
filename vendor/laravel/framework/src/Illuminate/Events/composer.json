@@ -1,0 +1,32 @@
+rame.
+
+Uses the backend specified by the
+option ``plotting.backend``. By default, matplotlib is used.
+
+Parameters
+----------
+data : Series or DataFrame
+    The object for which the method is called.
+x : label or position, default None
+    Only used if data is a DataFrame.
+y : label, position or list of label, positions, default None
+    Allows plotting of one column versus another. Only used if data is a
+    DataFrame.
+kind : str
+    The kind of plot to produce:
+
+    - 'line' : line plot (default)
+    - 'bar' : vertical bar plot
+    - 'barh' : horizontal bar plot
+    - 'hist' : histogram
+    - 'box' : boxplot
+    - 'kde' : Kernel Density Estimation plot
+    - 'density' : same as 'kde'
+    - 'area' : area plot
+    - 'pie' : pie plot
+    - 'scatter' : scatter plot (DataFrame only)
+    - 'hexbin' : hexbin plot (DataFrame only)
+ax : matplotlib axes object, default None
+    An axes of the current figure.
+subplots : bool or sequence of iterables, default False
+    Whether to group columns into su

@@ -1,0 +1,29 @@
+ = function () {
+    (!_cachedHistory || (_globalLazyTestHooks && _globalLazyTestHooks.lzy && !_cachedHistory.b)) && (_cachedHistory = lazySafeGetInst("history"));
+    return _cachedHistory.v;
+};
+var isNode = function () {
+    !_isNode && (_isNode = safeGetLazy(function () { return !!(process && (process.versions || {}).node); }, false));
+    return _isNode.v;
+};
+var isWebWorker = function () {
+    !_isWebWorker && (_isWebWorker = safeGetLazy(function () { return !!(self && self instanceof WorkerGlobalScope); }, false));
+    return _isWebWorker.v;
+};
+
+var _symbol;
+var _symbolFor;
+var _symbolKeyFor;
+function _getSymbolValue(name) {
+    return safeGetLazy(function () {
+        return (_symbol.v ? _symbol[name] : UNDEF_VALUE);
+    }, UNDEF_VALUE);
+}
+var isSymbol = _createIs("symbol");
+function hasSymbol() {
+    return !!getSymbol();
+}
+function getSymbol() {
+    var resetCache = !_symbol || (_globalLazyTestHooks && _globalLazyTestHooks.lzy && !_symbol.b);
+    resetCache && (_symbol = lazySafeGetInst(SYMBOL));
+    (!_symbolFor || resetCache) && (_symbolFor = _getS
