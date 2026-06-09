@@ -4,22 +4,34 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
     public function index()
     {
-        return "Danh sách Category";
+        $list = DB::table('categories')
+            ->select('cateid', 'catename', 'slug', 'image', 'status')
+            ->where('status', 1)
+            ->orderBy('catename')
+            ->get();
+
+        return view('admin.categories.index', compact('list'));
     }
 
     public function create()
     {
-        return "Form thêm Category";
+        return view('admin.categories.create');
     }
 
     public function store(Request $request)
     {
-        return "Lưu Category mới";
+        DB::table('categories')->insert([
+            'catename' => $request->catename,
+            'slug' => $request->slug
+        ]);
+
+        return redirect()->route('admin.categories.index');
     }
 
     public function show($id)
@@ -39,6 +51,8 @@ class CategoryController extends Controller
 
     public function destroy($id)
     {
-        return "Xóa Category ID: " . $id;
+        DB::table('categories')->where('cateid', $id)->delete();
+        return redirect()->route('admin.categories.index');
     }
+    
 }

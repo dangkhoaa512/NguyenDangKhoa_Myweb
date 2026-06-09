@@ -5,7 +5,7 @@ Admin
 </h4>
 <ul class="nav flex-column">
 <li class="nav-item">
-<a class="nav-link text-white" href="{{ route(('admin.home')) }}">
+<a class="nav-link text-white" href="{{ route('admin.home') }}">
 <i class="bi bi-house-door"></i>
 Dashboard
 </a>
@@ -28,22 +28,40 @@ Quản lý danh mục
 <div class="collapse" id="categoryMenu">
 <ul class="nav flex-column ms-3">
 <li class="nav-item">
-<a class="nav-link text-white" href="#">
-Danh sách loại sản phẩm
+<a class="nav-link text-white" href="{{ route('admin.categories.index') }}">
+    Danh sách loại sản phẩm
 </a>
 </li>
 <li class="nav-item">
-<a class="nav-link text-white" href="#">
-Thêm loại sản phẩm
+<a class="nav-link text-white" href="{{ route('admin.categories.create') }}">
+    Thêm loại sản phẩm
 </a>
 </li>
 </ul>
 </div>
 </li>
 <li class="nav-item">
-<a class="nav-link text-white" href="#">
+<a class="nav-link text-white" href="{{ route('admin.brands.index') }}">
+<i class="bi bi-patch-check"></i>
+Thương hiệu
+</a>
+</li>
+<li class="nav-item">
+<a class="nav-link text-white" href="{{ route('admin.users.index') }}">
+<i class="bi bi-people"></i>
+Người dùng
+</a>
+</li>
+<li class="nav-item">
+<a class="nav-link text-white" href="{{ route('admin.products.index') }}">
 <i class="bi bi-box-seam"></i>
 Sản phẩm
+</a>
+</li>
+<li class="nav-item">
+<a class="nav-link text-white" href="{{ route('admin.posts.index') }}">
+<i class="bi bi-file-text"></i>
+Bài viết
 </a>
 </li>
 </ul>

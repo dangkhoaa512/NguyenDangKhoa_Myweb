@@ -4,49 +4,36 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
-    public function test1()
-    {
-        return redirect()->route('admin.home');
-    }
-    public function test2()
-    {
-        return redirect('/admin/dashboard');
-    }
     public function index()
     {
-        return "Danh sách Product";
+        $list = DB::table('products')
+            ->join('categories', 'products.cateid', '=', 'categories.cateid')
+            ->leftJoin('brands', 'products.brandid', '=', 'brands.id')
+            ->select(
+                'products.id',
+                'products.productname',
+                'products.price',
+                'products.image',
+                'products.status',
+                'categories.catename',
+                'brands.brandname'
+            )
+            ->orderBy('products.productname')
+            ->get();
+
+        return view('admin.products.index', compact('list'));
     }
 
-    public function create()
-    {
-        return "Form thêm Product";
-    }
-
-    public function store(Request $request)
-    {
-        return "Lưu Product mới";
-    }
-
-    public function show($id)
-    {
-        return "Chi tiết Product ID: " . $id;
-    }
-
-    public function edit($id)
-    {
-        return "Form sửa Product ID: " . $id;
-    }
-
-    public function update(Request $request, $id)
-    {
-        return "Cập nhật Product ID: " . $id;
-    }
-
-    public function destroy($id)
-    {
-        return "Xóa Product ID: " . $id;
-    }
+    public function create() {}
+    public function store(Request $request) {}
+    public function show($id) {}
+    public function edit($id) {}
+    public function update(Request $request, $id) {}
+    public function destroy($id) {}
+    public function test1() {}
+    public function test2() {}
 }
