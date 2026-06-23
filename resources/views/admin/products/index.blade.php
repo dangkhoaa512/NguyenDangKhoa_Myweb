@@ -6,7 +6,15 @@
 @section('title', 'Sản Phẩm')
 
 {{-- Gán nội dung cho vùng section 'content' --}}
+
 @section('content')
+@if(session('success'))
+    <div class="alert alert-success">{{ session('success') }}</div>
+@endif
+
+@if(session('error'))
+    <div class="alert alert-danger">{{ session('error') }}</div>
+@endif
     <h2 class="mb-3">DANH SÁCH SẢN PHẨM</h2>
 
     <a href="{{ route('admin.products.create') }}" class="btn btn-success mb-3">
