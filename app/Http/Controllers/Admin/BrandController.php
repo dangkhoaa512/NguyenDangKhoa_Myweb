@@ -4,16 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\Brand;
 
 class BrandController extends Controller
 {
-    public function index()
+    public function index($limit = 10)
     {
-        $list = DB::table('brands')
-            ->select('id', 'brandname', 'slug', 'image', 'status')
+        $list = Brand::select('id', 'brandname', 'slug', 'image', 'status')
             ->orderBy('brandname')
-            ->get();
+            ->paginate($limit);
 
         return view('admin.brands.index', compact('list'));
     }

@@ -4,31 +4,55 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\Post;
 
 class PostController extends Controller
 {
-    public function index()
+    public function index($limit = 10)
     {
-        $list = DB::table('posts')
-            ->join('users', 'posts.user_id', '=', 'users.id')
+        $list = Post::with('user:id,fullname')
             ->select(
-                'posts.id',
-                'posts.title',
-                'posts.image',
-                'posts.status',
-                'users.fullname'
+                'id',
+                'title',
+                'image',
+                'status',
+                'user_id'
             )
-            ->orderBy('posts.title')
-            ->get();
+            ->orderBy('title')
+            ->paginate($limit);
 
         return view('admin.posts.index', compact('list'));
     }
 
-    public function create() {}
-    public function store(Request $request) {}
-    public function show($id) {}
-    public function edit($id) {}
-    public function update(Request $request, $id) {}
-    public function destroy($id) {}
+    public function create()
+    {
+        return view('admin.posts.create');
+    }
+
+    public function store(Request $request)
+    {
+        Post::create($request->all());
+        return redirect()->route('admin.posts.index');
+    }
+
+    public function show($id)
+    {
+        return "Chi tiết Post ID: " . $id;
+    }
+
+    public function edit($id)
+    {
+        return "Form sửa Post ID: " . $id;
+    }
+
+    public function update(Request $request, $id)
+    {
+        return "Cập nhật Post ID: " . $id;
+    }
+
+    public function destroy($id)
+    {
+        Post::where('id', $id)->delete();
+        return redirect()->route('admin.posts.index');
+    }
 }

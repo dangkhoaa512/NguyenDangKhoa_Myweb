@@ -18,13 +18,13 @@
             <th>Tên loại</th>
             <th>Slug</th>
             <th>Trạng thái</th>
-            <th>Chức năng</th>
+            <th width="120">Thao tác</th>
         </tr>
     </thead>
     <tbody>
-        @foreach($list as $index => $item)
+        @forelse($list as $item)
         <tr>
-            <td>{{ $index + 1 }}</td>
+            <td>{{ $list->firstItem() + $loop->index }}</td>
             <td>
                 @if($item->image)
                     <img src="{{ asset('images/' . $item->image) }}" width="50" height="50">
@@ -43,14 +43,29 @@
                 @endif
             </td>
             <td>
-                <form action="{{ route('admin.categories.destroy', $item->cateid) }}" method="POST">
+                <a href="{{ route('admin.categories.edit', $item->cateid) }}" class="btn btn-warning btn-sm">
+                    <i class="bi bi-pencil-square"></i>
+                </a>
+
+                <form action="{{ route('admin.categories.destroy', $item->cateid) }}" method="POST" style="display:inline">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa?')">
+                        <i class="bi bi-trash"></i>
+                    </button>
                 </form>
             </td>
         </tr>
-        @endforeach
+        @empty
+        <tr>
+            <td colspan="7" class="text-center">Không có dữ liệu</td>
+        </tr>
+        @endforelse
     </tbody>
 </table>
+
+<div class="d-flex justify-content-center">
+    {{ $list->links() }}
+</div>
+
 @endsection
