@@ -9,20 +9,7 @@
 @section('content')
 <div class="border rounded bg-white p-4 shadow-sm">
     <h3 class="mb-4">Sửa sản phẩm</h3>
-
-    {{-- Hiển thị lỗi từ session flash --}}
-    @if(session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-
+    <x-admin.alert />
     <form action="{{ route('admin.products.update', $product->id) }}" method="POST">
         @csrf
         @method('PUT')

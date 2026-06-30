@@ -1,27 +1,13 @@
 {{-- thừa kế layout/view admin.blade.php --}}
-{{-- resources/views/admin/layouts/admin.blade.php --}}
 @extends('admin.layouts.admin')
 
-{{-- Gán nội dung cho vùng section 'title' --}}
 @section('title', 'Thêm Sản Phẩm')
 
-{{-- Gán nội dung cho vùng section 'content' --}}
 @section('content')
 <div class="border rounded bg-white p-4 shadow-sm">
     <h3 class="mb-4">Thêm sản phẩm</h3>
 
-    {{-- Hiển thị lỗi từ session flash --}}
-    @if(session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
+   <x-admin.alert />
 
     <form action="{{ route('admin.products.store') }}" method="POST">
         @csrf
@@ -29,14 +15,18 @@
             <div class="col-md-6">
                 <div class="mb-3">
                     <label class="form-label">Tên sản phẩm</label>
-                    <input type="text" name="productname" class="form-control"
-                           value="{{ old('productname') }}" required>
+                    <input type="text" name="productname" class="form-control" value="{{ old('productname') }}">
+                    @error('productname')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Slug</label>
-                    <input type="text" name="slug" class="form-control"
-                           value="{{ old('slug') }}" required>
+                    <input type="text" name="slug" class="form-control" value="{{ old('slug') }}">
+                    @error('slug')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="mb-3">
@@ -50,6 +40,9 @@
                             </option>
                         @endforeach
                     </select>
+                    @error('cateid')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="mb-3">
@@ -63,20 +56,27 @@
                             </option>
                         @endforeach
                     </select>
+                    @error('brandid')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
                 </div>
             </div>
 
             <div class="col-md-6">
                 <div class="mb-3">
                     <label class="form-label">Giá</label>
-                    <input type="number" name="price" class="form-control"
-                           value="{{ old('price') }}" required>
+                    <input type="number" name="price" class="form-control" value="{{ old('price') }}">
+                    @error('price')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Giá khuyến mãi</label>
-                    <input type="number" name="pricediscount" class="form-control"
-                           value="{{ old('pricediscount', 0) }}">
+                    <input type="number" name="pricediscount" class="form-control" value="{{ old('pricediscount', 0) }}">
+                    @error('pricediscount')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="mb-3">
@@ -89,15 +89,22 @@
                     </label>
 
                     <input type="radio" class="btn-check" name="status" id="inactive" value="0"
-                        {{ old('status', 1) == 0 ? 'checked' : '' }}>
+                        {{ old('status') == 0 ? 'checked' : '' }}>
                     <label class="btn btn-outline-danger" for="inactive">
                         Ẩn
                     </label>
+
+                    @error('status')
+                        <span class="text-danger d-block">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Mô tả sản phẩm</label>
                     <textarea name="description" rows="4" class="form-control">{{ old('description') }}</textarea>
+                    @error('description')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
                 </div>
             </div>
         </div>

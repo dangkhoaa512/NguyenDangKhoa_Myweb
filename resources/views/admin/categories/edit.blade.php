@@ -6,9 +6,7 @@
 <div class="border rounded bg-white p-4 shadow-sm">
     <h3 class="mb-4">Sửa loại sản phẩm</h3>
 
-    @if(session('error'))
-        <div class="alert alert-danger">{{ session('error') }}</div>
-    @endif
+    <x-admin.alert />
 
     <form action="{{ route('admin.categories.update', $category->cateid) }}" method="POST">
         @csrf

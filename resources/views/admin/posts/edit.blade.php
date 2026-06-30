@@ -6,9 +6,7 @@
 <div class="border rounded bg-white p-4 shadow-sm">
     <h3 class="mb-4">Sửa bài viết</h3>
 
-    @if(session('error'))
-        <div class="alert alert-danger">{{ session('error') }}</div>
-    @endif
+    <x-admin.alert />
 
     <form action="{{ route('admin.posts.update', $post->id) }}" method="POST">
         @csrf
@@ -16,10 +14,16 @@
         <div class="mb-3">
             <label>Tiêu đề</label>
             <input type="text" name="title" class="form-control" value="{{ old('title', $post->title) }}">
+            @error('title')
+                <span class="text-danger">{{ $message }}</span>
+            @enderror
         </div>
         <div class="mb-3">
             <label>Slug</label>
             <input type="text" name="slug" class="form-control" value="{{ old('slug', $post->slug) }}">
+            @error('slug')
+                <span class="text-danger">{{ $message }}</span>
+            @enderror
         </div>
         <div class="mb-3">
             <label>Tác giả</label>
@@ -31,15 +35,24 @@
                     </option>
                 @endforeach
             </select>
+            @error('user_id')
+                <span class="text-danger">{{ $message }}</span>
+            @enderror
         </div>
         <div class="mb-3">
             <label>Nội dung</label>
             <textarea name="content" class="form-control" rows="5">{{ old('content', $post->content) }}</textarea>
+            @error('content')
+                <span class="text-danger">{{ $message }}</span>
+            @enderror
         </div>
         <div class="mb-3">
             <label class="d-block">Trạng thái</label>
             <input type="radio" name="status" value="1" {{ old('status', $post->status) == 1 ? 'checked' : '' }}> Hiện
             <input type="radio" name="status" value="0" {{ old('status', $post->status) == 0 ? 'checked' : '' }}> Ẩn
+            @error('status')
+                <span class="text-danger d-block">{{ $message }}</span>
+            @enderror
         </div>
         <button type="submit" class="btn btn-primary">Lưu</button>
         <a href="{{ route('admin.posts.index') }}" class="btn btn-secondary">Quay lại</a>
