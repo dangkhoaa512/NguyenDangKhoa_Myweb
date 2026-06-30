@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Models\User;
 
 class PostController extends Controller
 {
@@ -26,33 +27,82 @@ class PostController extends Controller
 
     public function create()
     {
-        return view('admin.posts.create');
+        $users = User::select('id', 'fullname')->orderBy('fullname')->get();
+        return view('admin.posts.create', compact('users'));
     }
 
     public function store(Request $request)
     {
-        Post::create($request->all());
-        return redirect()->route('admin.posts.index');
+        try {
+            if (empty($request->user_id)) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Vui lòng chọn tác giả');
+            }
+
+            Post::create([
+                'title' => $request->title,
+                'slug' => $request->slug,
+                'content' => $request->content,
+                'user_id' => $request->user_id,
+                'status' => $request->status ?? 1
+            ]);
+
+            return redirect()
+                ->route('admin.posts.index')
+                ->with('success', 'Thêm bài viết thành công');
+
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', $e->getMessage());
+        }
     }
 
-    public function show($id)
-    {
-        return "Chi tiết Post ID: " . $id;
-    }
+    public function show($id) {}
 
     public function edit($id)
     {
-        return "Form sửa Post ID: " . $id;
+        $post = Post::find($id);
+        $users = User::select('id', 'fullname')->orderBy('fullname')->get();
+        return view('admin.posts.edit', compact('post', 'users'));
     }
 
     public function update(Request $request, $id)
     {
-        return "Cập nhật Post ID: " . $id;
+        try {
+            if (empty($request->user_id)) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Vui lòng chọn tác giả');
+            }
+
+            $post = Post::find($id);
+
+            if (!$post) {
+                return redirect()
+                    ->route('admin.posts.index')
+                    ->with('error', 'Bài viết không tồn tại');
+            }
+
+            $post->update([
+                'title' => $request->title,
+                'slug' => $request->slug,
+                'content' => $request->content,
+                'user_id' => $request->user_id,
+                'status' => $request->status ?? 1
+            ]);
+
+            return redirect()
+                ->route('admin.posts.index')
+                ->with('success', 'Cập nhật bài viết thành công');
+
+        } catch (\Exception $e) {
+            return back()
+                ->withInput()
+                ->with('error', $e->getMessage());
+        }
     }
 
-    public function destroy($id)
-    {
-        Post::where('id', $id)->delete();
-        return redirect()->route('admin.posts.index');
-    }
+    public function destroy($id) {}
 }
