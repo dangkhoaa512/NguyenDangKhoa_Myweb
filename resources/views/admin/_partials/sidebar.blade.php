@@ -9,13 +9,7 @@ Admin
 <i class="bi bi-house-door"></i>
 Dashboard
 </a>
-</li>
-<li class="nav-item">
-<a class="nav-link text-white" href="/admin/dashboard">
-<i class="bi bi-house-door"></i>
-Dashboard***
-</a>
-</li>
+
 {{-- Menu expand --}}
 <li class="nav-item">
 <a class="nav-link text-white" 

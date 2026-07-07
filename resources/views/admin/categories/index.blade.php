@@ -27,7 +27,7 @@
             <td>{{ $list->firstItem() + $loop->index }}</td>
             <td>
                 @if($item->image)
-                    <img src="{{ asset('images/' . $item->image) }}" width="50" height="50">
+                    <img src="{{ asset('storage/' . $item->image) }}" width="50" height="50">
                 @else
                     <img src="{{ asset('images/default.png') }}" width="50" height="50">
                 @endif

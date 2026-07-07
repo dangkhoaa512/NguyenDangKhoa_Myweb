@@ -7,20 +7,13 @@ use Illuminate\Validation\Rule;
 
 class ProductRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     */
     public function rules(): array
     {
-        // lấy giá trị id từ URL hiện tại (khi update)
         $id = $this->route('product');
 
         return [
@@ -58,12 +51,24 @@ class ProductRequest extends FormRequest
                 'nullable',
                 'regex:/^[^@!$^]*$/',
             ],
+            'img' => [
+                $this->isMethod('POST') ? 'required' : 'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:200',
+            ],
+            'imgs' => [
+                'nullable',
+                'array',
+            ],
+            'imgs.*' => [
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:200',
+            ],
         ];
     }
 
-    /**
-     * Get the error messages for the defined validation rules.
-     */
     public function messages(): array
     {
         return [
@@ -82,12 +87,13 @@ class ProductRequest extends FormRequest
             'cateid.exists' => 'Loại sản phẩm không tồn tại.',
             'brandid.required' => 'Vui lòng chọn thương hiệu.',
             'brandid.exists' => 'Thương hiệu không tồn tại.',
+            'image' => ':attribute phải là hình ảnh.',
+            'mimes' => ':attribute chỉ chấp nhận các định dạng: jpg, jpeg, png, webp.',
+            'img.max' => ':attribute không được vượt quá 200 KB.',
+            'imgs.*.max' => ':attribute không được vượt quá 200 KB.',
         ];
     }
 
-    /**
-     * Get custom attributes for validator errors.
-     */
     public function attributes(): array
     {
         return [
@@ -99,6 +105,9 @@ class ProductRequest extends FormRequest
             'cateid' => 'Loại sản phẩm',
             'brandid' => 'Thương hiệu',
             'description' => 'Mô tả',
+            'img' => 'Hình ảnh chính',
+            'imgs' => 'Hình ảnh phụ',
+            'imgs.*' => 'Hình ảnh phụ',
         ];
     }
 }

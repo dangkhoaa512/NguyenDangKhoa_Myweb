@@ -5,9 +5,9 @@
 <div class="border rounded bg-white p-4 shadow-sm">
     <h3 class="mb-4">Thêm loại sản phẩm</h3>
 
-    {{-- Hiển thị tất cả lỗi Validation --}}
-   <x-admin.alert />
-    <form action="{{ route('admin.categories.store') }}" method="POST">
+    <x-admin.alert />
+
+    <form action="{{ route('admin.categories.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="row">
             <div class="col-md-6">
@@ -26,6 +26,15 @@
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
+
+                <div class="mb-3 img-group">
+                    <label class="form-label">Hình ảnh</label>
+                    <input type="file" name="img" class="form-control img-input">
+                    <div class="img-preview mt-2"></div>
+                    @error('img')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
             </div>
 
             <div class="col-md-6">
@@ -34,15 +43,11 @@
 
                     <input type="radio" class="btn-check" name="status" id="active" value="1"
                         {{ old('status', 1) == 1 ? 'checked' : '' }}>
-                    <label class="btn btn-outline-success" for="active">
-                        Hiển thị
-                    </label>
+                    <label class="btn btn-outline-success" for="active">Hiển thị</label>
 
                     <input type="radio" class="btn-check" name="status" id="inactive" value="0"
                         {{ old('status') == 0 ? 'checked' : '' }}>
-                    <label class="btn btn-outline-danger" for="inactive">
-                        Ẩn
-                    </label>
+                    <label class="btn btn-outline-danger" for="inactive">Ẩn</label>
 
                     @error('status')
                         <span class="text-danger d-block">{{ $message }}</span>
