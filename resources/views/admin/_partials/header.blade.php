@@ -1,13 +1,18 @@
-<nav class="navbar navbar-light bg-light admin-header">
-<div class="container-fluid">
-<span class="navbar-brand">Admin Panel</span>
-<ul class="nav">
-<li class="nav-item">
-<a class="nav-link" href="#">Xin chào</a>
-</li>
-<li class="nav-item">
-<a class="nav-link" href="#">Đăng xuất</a>
-</li>
-</ul>
+<div class="ms-auto d-flex align-items-center gap-3">
+    @if(Auth::check())
+        <span class="text-muted">
+            Xin chào, <strong>{{ Auth::user()->fullname }}</strong>
+        </span>
+
+        <a href="{{ route('admin.change-password') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-key"></i> Đổi mật khẩu
+        </a>
+
+        <form action="{{ route('admin.logout') }}" method="POST" class="d-inline">
+            @csrf
+            <button type="submit" class="btn btn-outline-danger btn-sm">
+                <i class="bi bi-box-arrow-right"></i> Đăng xuất
+            </button>
+        </form>
+    @endif
 </div>
-</nav>

@@ -173,6 +173,31 @@ class ProductController extends Controller
         Product::where('id', $id)->delete();
         return redirect()->route('admin.products.index');
     }
+    public function destroyImage($id)
+{
+    try {
+        $image = ProductImage::findOrFail($id);
+
+        // Xóa file ảnh khỏi storage
+        if (Storage::disk('public')->exists('products/' . $image->image)) {
+            Storage::disk('public')->delete('products/' . $image->image);
+        }
+
+        // Xóa bản ghi trong DB
+        $image->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Xóa ảnh thành công'
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => $e->getMessage()
+        ], 500);
+    }
+}
 
     public function test1() {}
     public function test2() {}

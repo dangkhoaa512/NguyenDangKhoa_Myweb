@@ -1,12 +1,49 @@
-{{-- thừa kế layout/view admin.blade.php --}}
-{{--resources/views/admin/layouts/admin.blade.php --}}
 @extends('admin.layouts.admin')
-{{-- Gán nội dung cho vùng section 'title' --}}
-{{-- (tương ứng với @yield('title') trong layout--}}
-@section('title', 'Xin chào')
 
-{{-- Gán nội dung cho vùng section 'content' --}}
-{{--tương ứng với @yield('content') trong layout --}}
+@section('title', 'Dashboard')
+
 @section('content')
-    <h1>My Dashboard</h1>
+<h2 class="mb-4">Dashboard</h2>
+
+@if(session('success'))
+    <div class="alert alert-success">{{ session('success') }}</div>
+@endif
+
+<div class="row">
+    <div class="col-md-3 mb-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-tags"></i> Loại sản phẩm</h5>
+                <p class="card-text fs-3 fw-bold">{{ \App\Models\Category::count() }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-box-seam"></i> Sản phẩm</h5>
+                <p class="card-text fs-3 fw-bold">{{ \App\Models\Product::count() }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-patch-check"></i> Thương hiệu</h5>
+                <p class="card-text fs-3 fw-bold">{{ \App\Models\Brand::count() }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card text-white bg-danger">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-people"></i> Người dùng</h5>
+                <p class="card-text fs-3 fw-bold">{{ \App\Models\User::count() }}</p>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection

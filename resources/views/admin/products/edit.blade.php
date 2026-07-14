@@ -128,8 +128,15 @@
                     <input type="file" name="imgs[]" class="form-control img-input" multiple>
                     <div class="img-preview mt-2">
                         @foreach($product->images as $image)
+                        <div class="d-inline-block position-relative me-2 mb-2" id="img-{{ $image->id }}">
                             <img src="{{ asset('storage/products/' . $image->image) }}"
-                                class="img-thumbnail me-2 mb-2" width="100">
+                                class="img-thumbnail" width="100">
+                            <button type="button"
+                                class="btn btn-danger btn-sm position-absolute top-0 end-0"
+                                onclick="deleteImage({{ $image->id }})">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
                         @endforeach
                     </div>
                     @error('imgs')
@@ -143,4 +150,31 @@
         <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">Quay lại</a>
     </form>
 </div>
+@push('scripts')
+<script>
+function deleteImage(id) {
+    if (!confirm('Bạn có chắc muốn xóa ảnh này?')) return;
+
+    fetch(`/admin/product-images/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json',
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            // Xóa element ảnh khỏi giao diện
+            document.getElementById('img-' + id).remove();
+        } else {
+            alert('Xóa thất bại: ' + data.message);
+        }
+    })
+    .catch(err => {
+        alert('Có lỗi xảy ra!');
+    });
+}
+</script>
+@endpush
 @endsection
