@@ -9,6 +9,10 @@
     <div class="alert alert-success">{{ session('success') }}</div>
 @endif
 
+@if(session('error'))
+    <div class="alert alert-danger">{{ session('error') }}</div>
+@endif
+
 <div class="row">
     <div class="col-md-3 mb-3">
         <div class="card text-white bg-primary">

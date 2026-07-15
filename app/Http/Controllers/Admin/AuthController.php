@@ -99,12 +99,14 @@ class AuthController extends Controller
 
         $user = Auth::user();
 
+        // Kiểm tra mật khẩu cũ
         if (!Hash::check($request->current_password, $user->password)) {
             return back()
                 ->withInput()
                 ->with('error', 'Mật khẩu cũ không đúng.');
         }
 
+        // Cập nhật mật khẩu mới
         $user->update([
             'password' => Hash::make($request->new_password)
         ]);
@@ -163,6 +165,7 @@ class AuthController extends Controller
     {
         $email = $request->query('email');
 
+        // Kiểm tra token có hợp lệ không
         $record = DB::table('password_reset_tokens')
             ->where('email', $email)
             ->where('token', $token)
@@ -197,6 +200,7 @@ class AuthController extends Controller
             ]
         );
 
+        // Kiểm tra token
         $record = DB::table('password_reset_tokens')
             ->where('email', $request->email)
             ->where('token', $request->token)

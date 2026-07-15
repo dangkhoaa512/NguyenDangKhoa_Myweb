@@ -131,11 +131,13 @@
                         <div class="d-inline-block position-relative me-2 mb-2" id="img-{{ $image->id }}">
                             <img src="{{ asset('storage/products/' . $image->image) }}"
                                 class="img-thumbnail" width="100">
+                            @if(auth()->user()->role == 1)
                             <button type="button"
                                 class="btn btn-danger btn-sm position-absolute top-0 end-0"
                                 onclick="deleteImage({{ $image->id }})">
                                 <i class="bi bi-x"></i>
                             </button>
+                            @endif
                         </div>
                         @endforeach
                     </div>

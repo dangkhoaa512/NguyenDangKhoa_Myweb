@@ -14,6 +14,7 @@ use App\Http\Requests\Admin\ProductRequest;
 
 class ProductController extends Controller
 {
+    
     public function index($limit = 10)
     {
         $list = Product::with([
@@ -198,6 +199,35 @@ class ProductController extends Controller
         ], 500);
     }
 }
+public function trash($limit = 10)
+    {
+        $list = Product::onlyTrashed()
+            ->with(['category:cateid,catename', 'brand:id,brandname'])
+            ->select('id', 'productname', 'price', 'image', 'status', 'cateid', 'brandid', 'deleted_at')
+            ->orderBy('deleted_at', 'desc')
+            ->paginate($limit);
+
+        return view('admin.products.trash', compact('list'));
+    }
+
+    public function restore($id)
+    {
+        $product = Product::onlyTrashed()->findOrFail($id);
+        $product->restore();
+        return redirect()->route('admin.products.trash')->with('success', 'Đã khôi phục sản phẩm');
+    }
+
+    public function forceDelete($id)
+    {
+        $product = Product::onlyTrashed()->findOrFail($id);
+
+        if ($product->image && Storage::disk('public')->exists('products/' . $product->image)) {
+            Storage::disk('public')->delete('products/' . $product->image);
+        }
+
+        $product->forceDelete();
+        return redirect()->route('admin.products.trash')->with('success', 'Đã xóa vĩnh viễn sản phẩm');
+    }
 
     public function test1() {}
     public function test2() {}
