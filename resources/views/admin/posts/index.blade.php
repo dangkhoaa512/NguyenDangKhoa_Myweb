@@ -5,9 +5,16 @@
 @section('content')
     <h2 class="mb-3">DANH SÁCH BÀI VIẾT</h2>
 
-    <a href="{{ route('admin.posts.create') }}" class="btn btn-success mb-3">
-        + Thêm mới
-    </a>
+    <x-admin.alert />
+
+    <div class="mb-3 d-flex justify-content-between">
+        <a href="{{ route('admin.posts.create') }}" class="btn btn-success">
+            + Thêm mới
+        </a>
+        <a href="{{ route('admin.posts.trash') }}" class="btn btn-outline-danger">
+            <i class="bi bi-trash3"></i> Thùng rác
+        </a>
+    </div>
 
     <table class="table table-bordered table-hover">
         <thead>

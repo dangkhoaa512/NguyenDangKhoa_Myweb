@@ -35,6 +35,16 @@
                             Thêm loại sản phẩm
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ route('admin.categories.trash') }}">
+                            <i class="bi bi-trash3"></i>
+                            Thùng rác
+                            @php $categoryTrashCount = \App\Models\Category::onlyTrashed()->count(); @endphp
+                            @if($categoryTrashCount > 0)
+                                <span class="badge bg-danger">{{ $categoryTrashCount }}</span>
+                            @endif
+                        </a>
+                    </li>
                 </ul>
             </div>
         </li>
@@ -76,6 +86,10 @@
             <a class="nav-link text-white" href="{{ route('admin.products.trash') }}">
                 <i class="bi bi-trash3"></i>
                 Thùng rác sản phẩm
+                @php $productTrashCount = \App\Models\Product::onlyTrashed()->count(); @endphp
+                @if($productTrashCount > 0)
+                    <span class="badge bg-danger">{{ $productTrashCount }}</span>
+                @endif
             </a>
         </li>
         @endif

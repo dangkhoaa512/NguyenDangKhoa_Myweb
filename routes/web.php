@@ -56,9 +56,48 @@ Route::middleware('role:1,4')->group(function () {
 
     // Chỉ Admin (1) — toàn quyền, bao gồm cả xóa
     Route::middleware('role:1')->group(function () {
+
+    // Brands trash
+        Route::get('trash/brands', [BrandController::class, 'trash'])->name('brands.trash');
+        Route::patch('brands/{id}/restore', [BrandController::class, 'restore'])->name('brands.restore');
+        Route::delete('brands/{id}/force-delete', [BrandController::class, 'forceDelete'])->name('brands.forceDelete');
+        Route::patch('brands-trash/restore-all', [BrandController::class, 'restoreAll'])->name('brands.restoreAll');
+        Route::delete('brands-trash/force-delete-all', [BrandController::class, 'forceDeleteAll'])->name('brands.forceDeleteAll');
+        Route::resource('brands', BrandController::class);
+
+        // Posts trash
+        Route::get('trash/posts', [PostController::class, 'trash'])->name('posts.trash');
+        Route::patch('posts/{id}/restore', [PostController::class, 'restore'])->name('posts.restore');
+        Route::delete('posts/{id}/force-delete', [PostController::class, 'forceDelete'])->name('posts.forceDelete');
+        Route::patch('posts-trash/restore-all', [PostController::class, 'restoreAll'])->name('posts.restoreAll');
+        Route::delete('posts-trash/force-delete-all', [PostController::class, 'forceDeleteAll'])->name('posts.forceDeleteAll');
+        Route::resource('posts', PostController::class);
+
+    // Categories trash
+        Route::get('trash/categories', [CategoryController::class, 'trash'])->name('categories.trash');
+        Route::patch('categories/{id}/restore', [CategoryController::class, 'restore'])->name('categories.restore');
+        Route::delete('categories/{id}/force-delete', [CategoryController::class, 'forceDelete'])->name('categories.forceDelete');
+        Route::patch('categories-trash/restore-all', [CategoryController::class, 'restoreAll'])->name('categories.restoreAll');
+        Route::delete('categories-trash/force-delete-all', [CategoryController::class, 'forceDeleteAll'])->name('categories.forceDeleteAll');
+
+        Route::resource('categories', CategoryController::class);
+
+        // Products trash
         Route::get('products-trash', [ProductController::class, 'trash'])->name('products.trash');
-    Route::put('products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
-    Route::delete('products/{id}/force-delete', [ProductController::class, 'forceDelete'])->name('products.force-delete');
+        Route::put('products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
+        Route::delete('products/{id}/force-delete', [ProductController::class, 'forceDelete'])->name('products.force-delete');
+        Route::put('products-trash/restore-all', [ProductController::class, 'restoreAll'])->name('products.restoreAll');
+        Route::delete('products-trash/force-delete-all', [ProductController::class, 'forceDeleteAll'])->name('products.forceDeleteAll');
+
+
+        Route::get('trash/categories', [CategoryController::class, 'trash'])->name('categories.trash');
+        Route::patch('categories/{id}/restore', [CategoryController::class, 'restore'])->name('categories.restore');
+        Route::delete('categories/{id}/force-delete', [CategoryController::class, 'forceDelete'])->name('categories.forceDelete');
+
+        Route::resource('categories', CategoryController::class);
+        Route::get('products-trash', [ProductController::class, 'trash'])->name('products.trash');
+        Route::put('products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
+        Route::delete('products/{id}/force-delete', [ProductController::class, 'forceDelete'])->name('products.force-delete');
         Route::resource('categories', CategoryController::class);
         Route::resource('brands', BrandController::class);
         Route::resource('users', UserController::class);

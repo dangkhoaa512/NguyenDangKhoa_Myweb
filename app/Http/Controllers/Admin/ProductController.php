@@ -207,7 +207,9 @@ public function trash($limit = 10)
             ->orderBy('deleted_at', 'desc')
             ->paginate($limit);
 
-        return view('admin.products.trash', compact('list'));
+        $trashCount = Product::onlyTrashed()->count();
+
+        return view('admin.products.trash', compact('list', 'trashCount'));
     }
 
     public function restore($id)
@@ -227,6 +229,47 @@ public function trash($limit = 10)
 
         $product->forceDelete();
         return redirect()->route('admin.products.trash')->with('success', 'Đã xóa vĩnh viễn sản phẩm');
+    }
+    public function restoreAll()
+    {
+        try {
+            $count = Product::onlyTrashed()->count();
+            Product::onlyTrashed()->restore();
+
+            return redirect()
+                ->route('admin.products.trash')
+                ->with('success', "Đã khôi phục {$count} sản phẩm.");
+
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Khôi phục thất bại.');
+        }
+    }
+
+    public function forceDeleteAll()
+    {
+        try {
+            $trashedProducts = Product::onlyTrashed()->get();
+
+            foreach ($trashedProducts as $product) {
+                if ($product->image && Storage::disk('public')->exists('products/' . $product->image)) {
+                    Storage::disk('public')->delete('products/' . $product->image);
+                }
+            }
+
+            $count = $trashedProducts->count();
+            Product::onlyTrashed()->forceDelete();
+
+            return redirect()
+                ->route('admin.products.trash')
+                ->with('success', "Đã xóa vĩnh viễn {$count} sản phẩm.");
+
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Xóa vĩnh viễn thất bại.');
+        }
     }
 
     public function test1() {}

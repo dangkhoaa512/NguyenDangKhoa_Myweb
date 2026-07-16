@@ -5,13 +5,16 @@
 @section('content')
 <h2 class="mb-3">DANH SÁCH THƯƠNG HIỆU</h2>
 
-@if(session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
-@endif
+<x-admin.alert />
 
-<a href="{{ route('admin.brands.create') }}" class="btn btn-success mb-3">
-    + Thêm mới
-</a>
+<div class="mb-3 d-flex justify-content-between">
+    <a href="{{ route('admin.brands.create') }}" class="btn btn-success">
+        + Thêm mới
+    </a>
+    <a href="{{ route('admin.brands.trash') }}" class="btn btn-outline-danger">
+        <i class="bi bi-trash3"></i> Thùng rác
+    </a>
+</div>
 
 <table class="table table-bordered table-hover table-striped">
     <thead class="table-dark">

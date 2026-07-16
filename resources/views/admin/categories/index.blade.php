@@ -5,6 +5,8 @@
 @section('content')
 <h2 class="mb-3">DANH SÁCH LOẠI SẢN PHẨM</h2>
 
+<x-admin.alert />
+
 <a href="{{ route('admin.categories.create') }}" class="btn btn-success mb-3">
     + Thêm mới
 </a>
