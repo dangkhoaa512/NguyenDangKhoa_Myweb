@@ -6,25 +6,61 @@ use App\Http\Controllers\DemoController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\BrandController;
-use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\PostController;
+use App\Http\Controllers\Client\HomeController;
+use App\Http\Controllers\Client\ProductController as ClientProductController;
+use App\Http\Controllers\Client\CartController;
+use App\Http\Controllers\Admin\OrderController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+/*
+|--------------------------------------------------------------------------
+| CLIENT ROUTES (không có prefix)
+|--------------------------------------------------------------------------
+*/
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
+Route::get('/products', [ClientProductController::class, 'index'])->name('products.index');
+Route::get('/product/{slug}', [ClientProductController::class, 'show'])->name('product.show');
+Route::get('/category/{slug}', [ClientProductController::class, 'category'])->name('products.category');
+Route::get('/brand/{slug}', [ClientProductController::class, 'brand'])->name('products.brand');
+Route::get('/search', [ClientProductController::class, 'search'])->name('products.search');
+
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
+Route::patch('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
+Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+Route::get('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+Route::post('/checkout', [CartController::class, 'placeOrder'])->name('cart.placeOrder');
+Route::get('/order-success/{code}', [CartController::class, 'success'])->name('cart.success');
+
+
+/*
+|--------------------------------------------------------------------------
+| DEMO ROUTES (giữ lại từ bài tập cũ)
+|--------------------------------------------------------------------------
+*/
 Route::get('/test', function () {
     return "Test";
 });
 
-Route::get('/demo', [DemoController::class,'index']);
-Route::get('/demo2', [DemoController::class,'index2']);
-Route::get('/demo3', [DemoController::class,'index3']);
-Route::get('/demo4/{id}', [DemoController::class,'index4']);
-Route::get('/demo5/{id?}', [DemoController::class,'index5']);
+Route::get('/demo', [DemoController::class, 'index']);
+Route::get('/demo2', [DemoController::class, 'index2']);
+Route::get('/demo3', [DemoController::class, 'index3']);
+Route::get('/demo4/{id}', [DemoController::class, 'index4']);
+Route::get('/demo5/{id?}', [DemoController::class, 'index5']);
 Route::get('/demo6/{parram1}/{parram2}', [DemoController::class, 'index6']);
 
+Route::get('/test1', [AdminProductController::class, 'test1']);
+Route::get('/test2', [AdminProductController::class, 'test2']);
+
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN ROUTES
+|--------------------------------------------------------------------------
+*/
 Route::prefix('admin')->name('admin.')->group(function () {
 
     // Authentication - không cần đăng nhập
@@ -37,79 +73,66 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/reset-password', [AuthController::class, 'postResetPassword'])->name('reset-password.post');
 
     // Các route cần đăng nhập
-Route::middleware('auth')->group(function () {
+    Route::middleware('auth')->group(function () {
+        Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+Route::get('orders/{id}', [OrderController::class, 'show'])->name('orders.show');
+Route::patch('orders/{id}/status', [OrderController::class, 'updateStatus'])->name('orders.status');
 
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('home');
-    Route::get('/change-password', [AuthController::class, 'changePassword'])->name('change-password');
-    Route::post('/change-password', [AuthController::class, 'postChangePassword'])->name('change-password.post');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('home');
+        Route::get('/change-password', [AuthController::class, 'changePassword'])->name('change-password');
+        Route::post('/change-password', [AuthController::class, 'postChangePassword'])->name('change-password.post');
 
-   // Admin (1), Nhân viên (2), Thu ngân (3), Kho (4) — đều xem được danh sách sản phẩm
-Route::middleware('role:1,2,3,4')->group(function () {
-    Route::get('products', [ProductController::class, 'index'])->name('products.index');
-});
+        // Admin (1), Nhân viên (2), Thu ngân (3), Kho (4) — đều xem được danh sách sản phẩm
+        Route::middleware('role:1,2,3,4')->group(function () {
+            Route::get('products', [AdminProductController::class, 'index'])->name('products.index');
+        });
 
-// Admin (1), Kho (4) — sửa sản phẩm
-Route::middleware('role:1,4')->group(function () {
-    Route::get('products/{id}/edit', [ProductController::class, 'edit'])->name('products.edit');
-    Route::put('products/{id}', [ProductController::class, 'update'])->name('products.update');
-});
+        // Admin (1), Kho (4) — sửa sản phẩm
+        Route::middleware('role:1,4')->group(function () {
+            Route::get('products/{id}/edit', [AdminProductController::class, 'edit'])->name('products.edit');
+            Route::put('products/{id}', [AdminProductController::class, 'update'])->name('products.update');
+        });
 
-    // Chỉ Admin (1) — toàn quyền, bao gồm cả xóa
-    Route::middleware('role:1')->group(function () {
+        // Chỉ Admin (1) — toàn quyền
+        Route::middleware('role:1')->group(function () {
 
-    // Brands trash
-        Route::get('trash/brands', [BrandController::class, 'trash'])->name('brands.trash');
-        Route::patch('brands/{id}/restore', [BrandController::class, 'restore'])->name('brands.restore');
-        Route::delete('brands/{id}/force-delete', [BrandController::class, 'forceDelete'])->name('brands.forceDelete');
-        Route::patch('brands-trash/restore-all', [BrandController::class, 'restoreAll'])->name('brands.restoreAll');
-        Route::delete('brands-trash/force-delete-all', [BrandController::class, 'forceDeleteAll'])->name('brands.forceDeleteAll');
-        Route::resource('brands', BrandController::class);
+            // Categories
+            Route::get('trash/categories', [CategoryController::class, 'trash'])->name('categories.trash');
+            Route::patch('categories/{id}/restore', [CategoryController::class, 'restore'])->name('categories.restore');
+            Route::delete('categories/{id}/force-delete', [CategoryController::class, 'forceDelete'])->name('categories.forceDelete');
+            Route::patch('categories-trash/restore-all', [CategoryController::class, 'restoreAll'])->name('categories.restoreAll');
+            Route::delete('categories-trash/force-delete-all', [CategoryController::class, 'forceDeleteAll'])->name('categories.forceDeleteAll');
+            Route::resource('categories', CategoryController::class);
 
-        // Posts trash
-        Route::get('trash/posts', [PostController::class, 'trash'])->name('posts.trash');
-        Route::patch('posts/{id}/restore', [PostController::class, 'restore'])->name('posts.restore');
-        Route::delete('posts/{id}/force-delete', [PostController::class, 'forceDelete'])->name('posts.forceDelete');
-        Route::patch('posts-trash/restore-all', [PostController::class, 'restoreAll'])->name('posts.restoreAll');
-        Route::delete('posts-trash/force-delete-all', [PostController::class, 'forceDeleteAll'])->name('posts.forceDeleteAll');
-        Route::resource('posts', PostController::class);
+            // Brands
+            Route::get('trash/brands', [BrandController::class, 'trash'])->name('brands.trash');
+            Route::patch('brands/{id}/restore', [BrandController::class, 'restore'])->name('brands.restore');
+            Route::delete('brands/{id}/force-delete', [BrandController::class, 'forceDelete'])->name('brands.forceDelete');
+            Route::patch('brands-trash/restore-all', [BrandController::class, 'restoreAll'])->name('brands.restoreAll');
+            Route::delete('brands-trash/force-delete-all', [BrandController::class, 'forceDeleteAll'])->name('brands.forceDeleteAll');
+            Route::resource('brands', BrandController::class);
 
-    // Categories trash
-        Route::get('trash/categories', [CategoryController::class, 'trash'])->name('categories.trash');
-        Route::patch('categories/{id}/restore', [CategoryController::class, 'restore'])->name('categories.restore');
-        Route::delete('categories/{id}/force-delete', [CategoryController::class, 'forceDelete'])->name('categories.forceDelete');
-        Route::patch('categories-trash/restore-all', [CategoryController::class, 'restoreAll'])->name('categories.restoreAll');
-        Route::delete('categories-trash/force-delete-all', [CategoryController::class, 'forceDeleteAll'])->name('categories.forceDeleteAll');
+            // Posts
+            Route::get('trash/posts', [PostController::class, 'trash'])->name('posts.trash');
+            Route::patch('posts/{id}/restore', [PostController::class, 'restore'])->name('posts.restore');
+            Route::delete('posts/{id}/force-delete', [PostController::class, 'forceDelete'])->name('posts.forceDelete');
+            Route::patch('posts-trash/restore-all', [PostController::class, 'restoreAll'])->name('posts.restoreAll');
+            Route::delete('posts-trash/force-delete-all', [PostController::class, 'forceDeleteAll'])->name('posts.forceDeleteAll');
+            Route::resource('posts', PostController::class);
 
-        Route::resource('categories', CategoryController::class);
+            // Users
+            Route::resource('users', UserController::class);
 
-        // Products trash
-        Route::get('products-trash', [ProductController::class, 'trash'])->name('products.trash');
-        Route::put('products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
-        Route::delete('products/{id}/force-delete', [ProductController::class, 'forceDelete'])->name('products.force-delete');
-        Route::put('products-trash/restore-all', [ProductController::class, 'restoreAll'])->name('products.restoreAll');
-        Route::delete('products-trash/force-delete-all', [ProductController::class, 'forceDeleteAll'])->name('products.forceDeleteAll');
-
-
-        Route::get('trash/categories', [CategoryController::class, 'trash'])->name('categories.trash');
-        Route::patch('categories/{id}/restore', [CategoryController::class, 'restore'])->name('categories.restore');
-        Route::delete('categories/{id}/force-delete', [CategoryController::class, 'forceDelete'])->name('categories.forceDelete');
-
-        Route::resource('categories', CategoryController::class);
-        Route::get('products-trash', [ProductController::class, 'trash'])->name('products.trash');
-        Route::put('products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
-        Route::delete('products/{id}/force-delete', [ProductController::class, 'forceDelete'])->name('products.force-delete');
-        Route::resource('categories', CategoryController::class);
-        Route::resource('brands', BrandController::class);
-        Route::resource('users', UserController::class);
-        Route::resource('posts', PostController::class);
-        Route::post('products', [ProductController::class, 'store'])->name('products.store');
-        Route::get('products/create', [ProductController::class, 'create'])->name('products.create');
-        Route::delete('products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
-        Route::delete('product-images/{id}', [ProductController::class, 'destroyImage'])
-            ->name('product-images.destroy');
+            // Products (các action còn lại ngoài index/edit/update ở trên)
+            Route::get('products-trash', [AdminProductController::class, 'trash'])->name('products.trash');
+            Route::put('products/{id}/restore', [AdminProductController::class, 'restore'])->name('products.restore');
+            Route::delete('products/{id}/force-delete', [AdminProductController::class, 'forceDelete'])->name('products.force-delete');
+            Route::put('products-trash/restore-all', [AdminProductController::class, 'restoreAll'])->name('products.restoreAll');
+            Route::delete('products-trash/force-delete-all', [AdminProductController::class, 'forceDeleteAll'])->name('products.forceDeleteAll');
+            Route::get('products/create', [AdminProductController::class, 'create'])->name('products.create');
+            Route::post('products', [AdminProductController::class, 'store'])->name('products.store');
+            Route::delete('products/{product}', [AdminProductController::class, 'destroy'])->name('products.destroy');
+            Route::delete('product-images/{id}', [AdminProductController::class, 'destroyImage'])->name('product-images.destroy');
+        });
     });
 });
-});
-
-Route::get('/test1', [ProductController::class, 'test1']);
-Route::get('/test2', [ProductController::class, 'test2']);

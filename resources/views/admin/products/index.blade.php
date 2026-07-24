@@ -39,13 +39,13 @@
         @forelse($list as $item)
             <tr>
                 <td>{{ $list->firstItem() + $loop->index }}</td>
-                <td>
-                    @if($item->image)
-                        <img src="{{ asset('storage/products/' . $item->image) }}" width="50" height="50" style="object-fit:cover">
-                    @else
-                        <img src="{{ asset('images/default.png') }}" width="50" height="50">
-                    @endif
-                </td>
+              <td>
+    @php
+        $imagePath = 'storage/products/' . ($item->image ?? '');
+        $imageUrl = ($item->image && file_exists(public_path($imagePath))) ? asset($imagePath) : asset('images/default.png');
+    @endphp
+    <img src="{{ $imageUrl }}" width="50" height="50" style="object-fit:cover">
+</td>
                 <td>{{ $item->productname }}</td>
                 <td>{{ $item->category?->catename }}</td>
                 <td>{{ $item->brand?->brandname }}</td>

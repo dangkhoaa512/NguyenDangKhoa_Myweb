@@ -84,6 +84,24 @@ public function update(UserRequest $request, $id)
             ->with('error', $e->getMessage());
     }
 }
+public function edit($id)
+{
+    $user = User::findOrFail($id);
+    return view('admin.users.edit', compact('user'));
+}
 
-    public function destroy($id) {}
+public function destroy($id)
+{
+    try {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return redirect()
+            ->route('admin.users.index')
+            ->with('success', 'Xóa người dùng thành công');
+
+    } catch (\Exception $e) {
+        return back()->with('error', $e->getMessage());
+    }
+}
 }

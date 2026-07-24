@@ -31,13 +31,13 @@
             @forelse($list as $item)
                 <tr>
                     <td>{{ $list->firstItem() + $loop->index }}</td>
-                    <td>
-                        @if($item->image)
-                            <img src="{{ asset('images/' . $item->image) }}" width="50" height="50">
-                        @else
-                            <img src="{{ asset('images/default.png') }}" width="50" height="50">
-                        @endif
-                    </td>
+                 <td>
+    @php
+        $imagePath = 'images/' . ($item->image ?? '');
+        $imageUrl = ($item->image && file_exists(public_path($imagePath))) ? asset($imagePath) : asset('images/default.png');
+    @endphp
+    <img src="{{ $imageUrl }}" width="50" height="50" style="object-fit:cover">
+</td>
                     <td>{{ $item->title }}</td>
                     <td>{{ $item->user?->fullname }}</td>
                     <td>

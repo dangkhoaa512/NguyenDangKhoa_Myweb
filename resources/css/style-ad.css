@@ -1,0 +1,29 @@
+.admin-sidebar {
+    transition: all 0.3s ease;
+}
+
+.admin-sidebar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Fix xung đột class .collapse giữa Bootstrap và Tailwind CSS.
+   Tailwind định nghĩa .collapse { visibility: collapse } (dùng cho table row),
+   trùng tên với .collapse của Bootstrap (dùng cho component thu gọn menu).
+   Ghi đè lại để Bootstrap Collapse hoạt động đúng. */
+/* Fix Bootstrap Collapse bị Tailwind CSS ghi đè */
+.collapse {
+    visibility: visible !important;
+}
+
+.collapse:not(.show) {
+    display: none;
+}
+
+.collapse.show {
+    display: block;
+    visibility: visible !important;
+}
+
+.navbar-collapse {
+    visibility: visible !important;
+}

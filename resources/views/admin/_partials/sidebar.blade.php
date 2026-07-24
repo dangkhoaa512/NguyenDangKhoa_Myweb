@@ -103,6 +103,12 @@
             </a>
         </li>
         @endif
+        <li class="nav-item">
+            <a class="nav-link text-white" href="{{ route('admin.orders.index') }}">
+                <i class="bi bi-bag"></i>
+                Đơn hàng
+            </a>
+        </li>
 
     </ul>
 </div>
